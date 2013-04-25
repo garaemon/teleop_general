@@ -71,7 +71,15 @@ GeneralCommander::GeneralCommander(bool control_body,
                                    bool control_prosilica,
                                    std::string l_arm_controller_name,
                                    std::string r_arm_controller_name,
-                                   std::string switch_controller_name)
+                                   std::string switch_controller_name,
+                                   std::string power_board_state_name,
+                                   std::string tilt_laser_service_name,
+                                   std::string head_traj_command_name,
+                                   std::string point_head_action_name,
+                                   std::string torso_command_name,
+                                   std::string base_command_name,
+                                   std::string r_gripper_controller_action_name,
+                                   std::string l_gripper_controller_action_name)
   : n_(),
     control_body_(control_body),
     control_head_(control_head),
@@ -101,12 +109,12 @@ GeneralCommander::GeneralCommander(bool control_body,
   //universal
   switch_controllers_service_ = n_.serviceClient<pr2_mechanism_msgs::SwitchController>(switch_controller_name);
   joint_state_sub_ = n_.subscribe("joint_states", 1, &GeneralCommander::jointStateCallback, this);
-  power_board_sub_ = n_.subscribe<pr2_msgs::PowerBoardState>("power_board/state", 1, &GeneralCommander::powerBoardCallback, this);
+  power_board_sub_ = n_.subscribe<pr2_msgs::PowerBoardState>(power_board_state_name, 1, &GeneralCommander::powerBoardCallback, this);
 
   if(control_head_) {
-    tilt_laser_service_ = n_.serviceClient<pr2_msgs::SetPeriodicCmd>("laser_tilt_controller/set_periodic_cmd");
-    head_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>("head_traj_controller/command", 1);  
-    head_track_hand_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::PointHeadAction>("/head_traj_controller/point_head_action", true);
+    tilt_laser_service_ = n_.serviceClient<pr2_msgs::SetPeriodicCmd>(tilt_laser_service_name);
+    head_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(head_traj_command_name, 1);  
+    head_track_hand_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::PointHeadAction>(point_head_action_name, true);
     while(!head_track_hand_client_->waitForServer(ros::Duration(5.0))){
       ROS_INFO("Waiting for the point_head_action server to come up");
     }
@@ -116,11 +124,11 @@ GeneralCommander::GeneralCommander(bool control_body,
     head_track_hand_client_ = NULL;
   }
   if(control_body_) {
-    torso_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>("torso_controller/command", 1);
-    base_pub_ = n_.advertise<geometry_msgs::Twist>("base_controller/command", 1);
+    torso_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(torso_command_name, 1);
+    base_pub_ = n_.advertise<geometry_msgs::Twist>(base_command_name, 1);
   }
   if(control_rarm_) {
-    right_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("r_gripper_controller/gripper_action", true);
+    right_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>(r_gripper_controller_action_name, true);
     right_arm_trajectory_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction>(r_arm_controller_name_+"/joint_trajectory_action", true);
     right_arm_traj_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(r_arm_controller_name_+"/command", 1);
     while(!right_gripper_client_->waitForServer(ros::Duration(5.0))){
@@ -134,7 +142,7 @@ GeneralCommander::GeneralCommander(bool control_body,
     right_arm_trajectory_client_ = NULL;
   }
   if(control_larm_) {
-    left_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("l_gripper_controller/gripper_action", true);
+    left_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>(l_gripper_controller_action_name, true);
     left_arm_trajectory_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction>(l_arm_controller_name_+"/joint_trajectory_action", true);
     left_arm_traj_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(l_arm_controller_name_+"/command", 1);
     while(!left_gripper_client_->waitForServer(ros::Duration(5.0))){

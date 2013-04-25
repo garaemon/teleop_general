@@ -52,6 +52,14 @@
 static const std::string default_larm_controller_name="l_arm_controller";
 static const std::string default_rarm_controller_name="r_arm_controller";
 static const std::string default_switch_controller_name="switch_controller";
+static const std::string default_power_board_state_name="power_board/state";
+static const std::string default_tilt_laser_service_name="laser_tilt_controller/set_periodic_cmd";
+static const std::string default_head_traj_command_name="head_traj_controller/command";
+static const std::string default_point_head_action_name="/head_traj_controller/point_head_action";
+static const std::string default_torso_command_name="torso_controller/command";
+static const std::string default_base_command_name="base_controller/command";
+static const std::string default_rgripper_controller_action_name="r_gripper_controller/gripper_action";
+static const std::string default_lgripper_controller_action_name="l_gripper_controller/gripper_action";
 
 class GeneralCommander {
 
@@ -96,7 +104,15 @@ public:
                    bool control_prosilica,
                    std::string larm_controller_name=default_larm_controller_name,
                    std::string rarm_controller_name=default_rarm_controller_name,
-                   std::string switch_controller_name=default_switch_controller_name); 
+                   std::string switch_controller_name=default_switch_controller_name,
+                   std::string power_board_state_name=default_power_board_state_name,
+                   std::string tilt_laser_service_name=default_tilt_laser_service_name,
+                   std::string head_traj_command_name=default_head_traj_command_name,
+                   std::string point_head_action_name=default_power_board_state_name,
+                   std::string torso_command_name=default_torso_command_name,
+                   std::string base_command_name=default_base_command_name,
+                   std::string r_gripper_controller_action_name=default_rgripper_controller_action_name,
+                   std::string l_gripper_controller_action_name=default_lgripper_controller_action_name); 
 
   ~GeneralCommander();
   
