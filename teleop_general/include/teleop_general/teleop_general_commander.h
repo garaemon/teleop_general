@@ -49,7 +49,9 @@
 #include <pr2_common_action_msgs/TuckArmsAction.h>
 #include <pr2_msgs/PowerBoardState.h>
 
-static const std::string default_arm_controller_name="arm_controller";
+static const std::string default_larm_controller_name="l_arm_controller";
+static const std::string default_rarm_controller_name="r_arm_controller";
+static const std::string default_switch_controller_name="switch_controller";
 
 class GeneralCommander {
 
@@ -92,7 +94,9 @@ public:
                    bool control_rarm,
                    bool control_larm,
                    bool control_prosilica,
-                   std::string arm_controller_name=default_arm_controller_name); 
+                   std::string larm_controller_name=default_larm_controller_name,
+                   std::string rarm_controller_name=default_rarm_controller_name,
+                   std::string switch_controller_name=default_switch_controller_name); 
 
   ~GeneralCommander();
   
@@ -160,7 +164,7 @@ public:
 
 private:
 
-  geometry_msgs::Pose getPositionFromJointsPose(ros::ServiceClient& service_client,                                             
+  geometry_msgs::Pose getPositionFromJointsPose(ros::ServiceClient& service_client,
                                                 std::string fk_link,
                                                 const std::vector<std::string>& joint_names, const std::vector<double>& joint_pos);
   

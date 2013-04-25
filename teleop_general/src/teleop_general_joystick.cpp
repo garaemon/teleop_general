@@ -178,7 +178,9 @@ public:
                                 control_rarm,
                                 control_larm,
                                 control_prosilica,
-                                arm_controller_name);
+                                "l_" + arm_controller_name,
+                                "r_" + arm_controller_name,
+                                "pr2_controller_manager/switch_controller");
     }
     first_callback_ = true;
     

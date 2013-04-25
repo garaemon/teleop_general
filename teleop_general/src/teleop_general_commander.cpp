@@ -69,19 +69,21 @@ GeneralCommander::GeneralCommander(bool control_body,
                                    bool control_rarm,
                                    bool control_larm,
                                    bool control_prosilica,
-                                   std::string arm_controller_name) 
+                                   std::string l_arm_controller_name,
+                                   std::string r_arm_controller_name,
+                                   std::string switch_controller_name)
   : n_(),
     control_body_(control_body),
     control_head_(control_head),
     control_rarm_(control_rarm),
     control_larm_(control_larm),
-    control_prosilica_(control_prosilica)                                                        
+    control_prosilica_(control_prosilica)
 {
 
-  r_arm_controller_name_ = "r_"+arm_controller_name;
-  l_arm_controller_name_ = "l_"+arm_controller_name;
+  r_arm_controller_name_ = l_arm_controller_name;
+  l_arm_controller_name_ = r_arm_controller_name;
 
-  head_control_mode_ = HEAD_JOYSTICK;      
+  head_control_mode_ = HEAD_JOYSTICK;
 
   std::string urdf_xml,full_urdf_xml;
   n_.param("urdf_xml", urdf_xml, std::string("robot_description"));
@@ -97,7 +99,7 @@ GeneralCommander::GeneralCommander(bool control_body,
   }
 
   //universal
-  switch_controllers_service_ = n_.serviceClient<pr2_mechanism_msgs::SwitchController>("pr2_controller_manager/switch_controller");
+  switch_controllers_service_ = n_.serviceClient<pr2_mechanism_msgs::SwitchController>(switch_controller_name);
   joint_state_sub_ = n_.subscribe("joint_states", 1, &GeneralCommander::jointStateCallback, this);
   power_board_sub_ = n_.subscribe<pr2_msgs::PowerBoardState>("power_board/state", 1, &GeneralCommander::powerBoardCallback, this);
 
