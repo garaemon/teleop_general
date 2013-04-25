@@ -120,7 +120,7 @@ public:
                    std::string tuck_arm_action_name=default_tuck_arm_action_name,
                    std::string rarm_kinematics_name=default_rarm_kinematics_name,
                    std::string larm_kinematics_name=default_larm_kinematics_name,
-                   std::string image_request_name=default_image_request_name); 
+                   std::string image_request_name=default_image_request_name);
 
   ~GeneralCommander();
   
@@ -186,6 +186,14 @@ public:
     walk_along_ok_ = false;
   }
 
+  void setHeadNodTraj(trajectory_msgs::JointTrajectory traj) {
+    head_nod_traj_ = traj;
+  }
+
+  void setHeadShakeTraj(trajectory_msgs::JointTrajectory traj) {
+    head_nod_traj_ = traj;
+  }
+
 private:
 
   geometry_msgs::Pose getPositionFromJointsPose(ros::ServiceClient& service_client,
@@ -225,6 +233,8 @@ private:
 
   std::string r_arm_controller_name_;
   std::string l_arm_controller_name_;
+
+
 
   std::map<std::string, double> joint_state_position_map_;
   std::map<std::string, double> joint_state_velocity_map_;

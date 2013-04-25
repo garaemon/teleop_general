@@ -207,6 +207,7 @@ GeneralCommander::GeneralCommander(bool control_body,
   left_walk_along_pose_.push_back(-.141);
   left_walk_along_pose_.push_back(3.114);
 
+  // users can change the trajectory via setHeadNodTraj
   head_nod_traj_.joint_names.push_back("head_pan_joint");
   head_nod_traj_.joint_names.push_back("head_tilt_joint");
   head_nod_traj_.points.resize(3);
@@ -228,6 +229,7 @@ GeneralCommander::GeneralCommander(bool control_body,
   head_nod_traj_.points[2].velocities.push_back(0.0);
   head_nod_traj_.points[2].time_from_start = ros::Duration(1.5);
 
+  // users can change the trajectory via setHeadShakeTraj
   head_shake_traj_.joint_names.push_back("head_pan_joint");
   head_shake_traj_.joint_names.push_back("head_tilt_joint");
   head_shake_traj_.points.resize(3);
