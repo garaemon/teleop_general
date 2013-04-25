@@ -123,7 +123,9 @@ public:
                    std::string image_request_name=default_image_request_name);
 
   ~GeneralCommander();
-  
+
+  void initROSConnection();
+
   void loadFromParameters(ros::NodeHandle &n);
 
   void setLaserMode(LaserControlMode mode);
@@ -235,8 +237,19 @@ private:
 
   std::string r_arm_controller_name_;
   std::string l_arm_controller_name_;
-
-
+  std::string switch_controller_name_;
+  std::string power_board_state_name_;
+  std::string tilt_laser_service_name_;
+  std::string head_traj_command_name_;
+  std::string point_head_action_name_;
+  std::string torso_command_name_;
+  std::string base_command_name_;
+  std::string rgripper_controller_action_name_;
+  std::string lgripper_controller_action_name_;
+  std::string tuck_arm_action_name_;
+  std::string rarm_kinematics_name_;
+  std::string larm_kinematics_name_;
+  std::string image_request_name_;
 
   std::map<std::string, double> joint_state_position_map_;
   std::map<std::string, double> joint_state_velocity_map_;

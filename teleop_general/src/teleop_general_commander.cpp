@@ -91,9 +91,6 @@ GeneralCommander::GeneralCommander(bool control_body,
     control_larm_(control_larm),
     control_prosilica_(control_prosilica)
 {
-#if 0
-  r_arm_controller_name_ = l_arm_controller_name;
-  l_arm_controller_name_ = r_arm_controller_name;
 
   head_control_mode_ = HEAD_JOYSTICK;
 
@@ -110,146 +107,11 @@ GeneralCommander::GeneralCommander(bool control_body,
     robot_model_initialized_ = true;
   }
 
-  //universal
-  switch_controllers_service_ = n_.serviceClient<pr2_mechanism_msgs::SwitchController>(switch_controller_name);
-  joint_state_sub_ = n_.subscribe("joint_states", 1, &GeneralCommander::jointStateCallback, this);
-  power_board_sub_ = n_.subscribe<pr2_msgs::PowerBoardState>(power_board_state_name, 1, &GeneralCommander::powerBoardCallback, this);
-
-  if(control_head_) {
-    tilt_laser_service_ = n_.serviceClient<pr2_msgs::SetPeriodicCmd>(tilt_laser_service_name);
-    head_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(head_traj_command_name, 1);  
-    head_track_hand_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::PointHeadAction>(point_head_action_name, true);
-    while(!head_track_hand_client_->waitForServer(ros::Duration(5.0))){
-      ROS_INFO("Waiting for the point_head_action server to come up");
-    }
-    //just in case there's an existing goal
-    head_track_hand_client_->cancelAllGoals();
-  } else {
-    head_track_hand_client_ = NULL;
-  }
-  if(control_body_) {
-    torso_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(torso_command_name, 1);
-    base_pub_ = n_.advertise<geometry_msgs::Twist>(base_command_name, 1);
-  }
-  if(control_rarm_) {
-    right_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>(r_gripper_controller_action_name, true);
-    right_arm_trajectory_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction>(r_arm_controller_name_+"/joint_trajectory_action", true);
-    right_arm_traj_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(r_arm_controller_name_+"/command", 1);
-    while(!right_gripper_client_->waitForServer(ros::Duration(5.0))){
-      ROS_INFO("Waiting for the right gripper action server to come up");
-    }  
-    while(!right_arm_trajectory_client_->waitForServer(ros::Duration(5.0))){
-      ROS_INFO_STREAM("Waiting for the right arm trajectory action server to come up" << r_arm_controller_name_+"/joint_trajectory_action");
-    }
-  } else {
-    right_gripper_client_ = NULL;
-    right_arm_trajectory_client_ = NULL;
-  }
-  if(control_larm_) {
-    left_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>(l_gripper_controller_action_name, true);
-    left_arm_trajectory_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction>(l_arm_controller_name_+"/joint_trajectory_action", true);
-    left_arm_traj_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(l_arm_controller_name_+"/command", 1);
-    while(!left_gripper_client_->waitForServer(ros::Duration(5.0))){
-      ROS_INFO("Waiting for the right gripper action server to come up");
-    }
-    while(!left_arm_trajectory_client_->waitForServer(ros::Duration(5.0))){
-      ROS_INFO_STREAM("Waiting for the left arm trajectory action server to come up");
-    }
-  } else {
-    left_gripper_client_ = NULL;
-    left_arm_trajectory_client_ = NULL;
-  }
-  if(control_larm_ || control_rarm_) {
-    tuck_arms_client_ = new actionlib::SimpleActionClient<pr2_common_action_msgs::TuckArmsAction>(tuck_arm_action_name, true);
-  } else {
-    tuck_arms_client_ = NULL;
-  }
-
-  if(control_rarm_) {
-    ROS_INFO("Waiting for right arm kinematics servers");
-    ros::service::waitForService(rarm_kinematics_name + "/get_fk_solver_info");
-    ros::service::waitForService(rarm_kinematics_name + "/get_fk");
-    ros::service::waitForService(rarm_kinematics_name + "/get_ik");
-    right_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>(rarm_kinematics_name + "/get_fk_solver_info", true);
-    right_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>(rarm_kinematics_name + "/get_fk", true);
-    right_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>(rarm_kinematics_name + "/get_ik", true);
-  }
-
-  if(control_larm_) {
-    ROS_INFO("Waiting for left arm kinematics servers");
-    ros::service::waitForService(larm_kinematics_name + "/get_fk");
-    ros::service::waitForService(larm_kinematics_name + "/get_fk_solver_info");
-    ros::service::waitForService(larm_kinematics_name + "/get_ik");
-    left_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>(larm_kinematics_name + "/get_fk_solver_info", true);
-    left_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>(larm_kinematics_name + "/get_fk", true);
-    left_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>(larm_kinematics_name + "/get_ik", true);
-  }
-  
 
   if(control_prosilica_) {
     ros::service::waitForService(image_request_name);
     prosilica_polling_client_ = n_.serviceClient<polled_camera::GetPolledImage>(image_request_name, true);
   }
-
-  right_walk_along_pose_.push_back(.049);
-  right_walk_along_pose_.push_back(-.116);
-  right_walk_along_pose_.push_back(.036);
-  right_walk_along_pose_.push_back(-1.272);
-  right_walk_along_pose_.push_back(-.084);
-  right_walk_along_pose_.push_back(-.148);
-  right_walk_along_pose_.push_back(-0.027);
-
-  left_walk_along_pose_.push_back(0.0);
-  left_walk_along_pose_.push_back(-.149);
-  left_walk_along_pose_.push_back(.085);
-  left_walk_along_pose_.push_back(-1.234);
-  left_walk_along_pose_.push_back(0.030);
-  left_walk_along_pose_.push_back(-.141);
-  left_walk_along_pose_.push_back(3.114);
-
-  // users can change the trajectory via setHeadNodTraj
-  head_nod_traj_.joint_names.push_back("head_pan_joint");
-  head_nod_traj_.joint_names.push_back("head_tilt_joint");
-  head_nod_traj_.points.resize(3);
-  head_nod_traj_.points[0].positions.push_back(0.0);
-  head_nod_traj_.points[0].positions.push_back(-0.2);
-  head_nod_traj_.points[0].velocities.push_back(0.0);
-  head_nod_traj_.points[0].velocities.push_back(0.0);
-  head_nod_traj_.points[0].time_from_start = ros::Duration(0.5);
-
-  head_nod_traj_.points[1].positions.push_back(0.0);
-  head_nod_traj_.points[1].positions.push_back(0.2);
-  head_nod_traj_.points[1].velocities.push_back(0.0);
-  head_nod_traj_.points[1].velocities.push_back(0.0);
-  head_nod_traj_.points[1].time_from_start = ros::Duration(1.0);
-
-  head_nod_traj_.points[2].positions.push_back(0.0);
-  head_nod_traj_.points[2].positions.push_back(0.0);
-  head_nod_traj_.points[2].velocities.push_back(0.0);
-  head_nod_traj_.points[2].velocities.push_back(0.0);
-  head_nod_traj_.points[2].time_from_start = ros::Duration(1.5);
-
-  // users can change the trajectory via setHeadShakeTraj
-  head_shake_traj_.joint_names.push_back("head_pan_joint");
-  head_shake_traj_.joint_names.push_back("head_tilt_joint");
-  head_shake_traj_.points.resize(3);
-  head_shake_traj_.points[0].positions.push_back(.62);
-  head_shake_traj_.points[0].positions.push_back(0.0);
-  head_shake_traj_.points[0].velocities.push_back(0.0);
-  head_shake_traj_.points[0].velocities.push_back(0.0);
-  head_shake_traj_.points[0].time_from_start = ros::Duration(0.5);
-
-  head_shake_traj_.points[1].positions.push_back(-.62);
-  head_shake_traj_.points[1].positions.push_back(0.0);
-  head_shake_traj_.points[1].velocities.push_back(0.0);
-  head_shake_traj_.points[1].velocities.push_back(0.0);
-  head_shake_traj_.points[1].time_from_start = ros::Duration(1.0);
-
-  head_shake_traj_.points[2].positions.push_back(0.0);
-  head_shake_traj_.points[2].positions.push_back(0.0);
-  head_shake_traj_.points[2].velocities.push_back(0.0);
-  head_shake_traj_.points[2].velocities.push_back(0.0);
-  head_shake_traj_.points[2].time_from_start = ros::Duration(1.5);
 
   //making sure that everything is in the right mode
   right_arm_control_mode_ = ARM_MANNEQUIN_MODE;
@@ -276,7 +138,7 @@ GeneralCommander::GeneralCommander(bool control_body,
 
   last_torso_vel_ = 0.0;
   walk_along_ok_ = false;
-#endif
+
 }
 
 GeneralCommander::~GeneralCommander() {
@@ -340,14 +202,132 @@ std::vector<trajectory_msgs::JointTrajectoryPoint> readJointTrajectoryPointsPara
   return ret;
 }
 
+void GeneralCommander::initROSConnection() {
+  //universal
+  switch_controllers_service_ = n_.serviceClient<pr2_mechanism_msgs::SwitchController>(switch_controller_name_);
+  joint_state_sub_ = n_.subscribe("joint_states", 1, &GeneralCommander::jointStateCallback, this);
+  power_board_sub_ = n_.subscribe<pr2_msgs::PowerBoardState>(power_board_state_name_, 1,
+                                                             &GeneralCommander::powerBoardCallback, this);
+  if(control_head_) {
+    tilt_laser_service_ = n_.serviceClient<pr2_msgs::SetPeriodicCmd>(tilt_laser_service_name_);
+    head_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(head_traj_command_name_, 1);
+    head_track_hand_client_
+      = new actionlib::SimpleActionClient<pr2_controllers_msgs::PointHeadAction>(point_head_action_name_, true);
+    while(!head_track_hand_client_->waitForServer(ros::Duration(5.0))){
+      ROS_INFO("Waiting for the point_head_action server to come up");
+    }
+    //just in case there's an existing goal
+    head_track_hand_client_->cancelAllGoals();
+  } else {
+    head_track_hand_client_ = NULL;
+  }
+  if(control_body_) {
+    torso_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(torso_command_name_, 1);
+    base_pub_ = n_.advertise<geometry_msgs::Twist>(base_command_name_, 1);
+  }
+
+  if(control_rarm_) {
+    right_gripper_client_
+      = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>(rgripper_controller_action_name_, true);
+    right_arm_trajectory_client_
+      = new actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction>(r_arm_controller_name_+"/joint_trajectory_action", true);
+    right_arm_traj_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(r_arm_controller_name_+"/command", 1);
+    while(!right_gripper_client_->waitForServer(ros::Duration(5.0))){
+      ROS_INFO("Waiting for the right gripper action server to come up");
+    }
+    while(!right_arm_trajectory_client_->waitForServer(ros::Duration(5.0))){
+      ROS_INFO_STREAM("Waiting for the right arm trajectory action server to come up" << r_arm_controller_name_+"/joint_trajectory_action");
+    }
+  } else {
+    right_gripper_client_ = NULL;
+    right_arm_trajectory_client_ = NULL;
+  }
+
+  if(control_larm_) {
+    left_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>(lgripper_controller_action_name_, true);
+    left_arm_trajectory_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction>(l_arm_controller_name_+"/joint_trajectory_action", true);
+    left_arm_traj_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>(l_arm_controller_name_+"/command", 1);
+    while(!left_gripper_client_->waitForServer(ros::Duration(5.0))){
+      ROS_INFO("Waiting for the right gripper action server to come up");
+    }
+    while(!left_arm_trajectory_client_->waitForServer(ros::Duration(5.0))){
+      ROS_INFO_STREAM("Waiting for the left arm trajectory action server to come up");
+    }
+  } else {
+    left_gripper_client_ = NULL;
+    left_arm_trajectory_client_ = NULL;
+  }
+
+  if(control_larm_ || control_rarm_) {
+    tuck_arms_client_ = new actionlib::SimpleActionClient<pr2_common_action_msgs::TuckArmsAction>(tuck_arm_action_name_, true);
+  } else {
+    tuck_arms_client_ = NULL;
+  }
+
+  if(control_rarm_) {
+    ROS_INFO("Waiting for right arm kinematics servers");
+    ros::service::waitForService(rarm_kinematics_name_ + "/get_fk_solver_info");
+    ros::service::waitForService(rarm_kinematics_name_ + "/get_fk");
+    ros::service::waitForService(rarm_kinematics_name_ + "/get_ik");
+    right_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>(rarm_kinematics_name_ + "/get_fk_solver_info", true);
+    right_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>(rarm_kinematics_name_ + "/get_fk", true);
+    right_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>(rarm_kinematics_name_ + "/get_ik", true);
+  }
+
+  if(control_larm_) {
+    ROS_INFO("Waiting for left arm kinematics servers");
+    ros::service::waitForService(larm_kinematics_name_ + "/get_fk");
+    ros::service::waitForService(larm_kinematics_name_ + "/get_fk_solver_info");
+    ros::service::waitForService(larm_kinematics_name_ + "/get_ik");
+    left_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>(larm_kinematics_name_ + "/get_fk_solver_info", true);
+    left_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>(larm_kinematics_name_ + "/get_fk", true);
+    left_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>(larm_kinematics_name_ + "/get_ik", true);
+  }
+
+  if(control_prosilica_) {
+    ros::service::waitForService(image_request_name_);
+    prosilica_polling_client_ = n_.serviceClient<polled_camera::GetPolledImage>(image_request_name_, true);
+  }
+
+}
+
 void GeneralCommander::loadFromParameters(ros::NodeHandle &n) {
+  n.param("r_arm_controller", r_arm_controller_name_, default_rarm_controller_name);
+  n.param("l_arm_controller", l_arm_controller_name_, default_larm_controller_name);
+  n.param("switch_controller", switch_controller_name_, default_switch_controller_name);
+  n.param("power_board_state", power_board_state_name_, default_power_board_state_name);
+  n.param("tilt_laser_service", tilt_laser_service_name_, default_tilt_laser_service_name);
+  n.param("head_traj_command", head_traj_command_name_, default_head_traj_command_name);
+  n.param("point_head_action", point_head_action_name_, default_point_head_action_name);
+  n.param("torso_command", torso_command_name_, default_torso_command_name);
+  n.param("base_command", base_command_name_, default_base_command_name);
+  n.param("rgripper_controller_action", rgripper_controller_action_name_, default_rgripper_controller_action_name);
+  n.param("lgripper_controller_action", lgripper_controller_action_name_, default_lgripper_controller_action_name);
+  n.param("tuck_arm_action", tuck_arm_action_name_, default_tuck_arm_action_name);
+  n.param("rarm_kinematics_name", rarm_kinematics_name_, default_rarm_kinematics_name);
+  n.param("larm_kinematics_name", larm_kinematics_name_, default_larm_kinematics_name);
+  n.param("image_request", image_request_name_, default_image_request_name);
+
+  // right_walk_along_pose, left_walk_along_pose
+  if(n.hasParam("right_walk_along_pose")) {
+    right_walk_along_pose_ = readListParameter<double>("right_walk_along_pose", n, XmlRpc::XmlRpcValue::TypeDouble);
+  }
+  if(n.hasParam("left_walk_along_pose")) {
+    left_walk_along_pose_ = readListParameter<double>("left_walk_along_pose", n, XmlRpc::XmlRpcValue::TypeDouble);
+  }
   // head_nod_trajectory
   if(n.hasParam("head_nod_trajectory")) {
-    ROS_INFO("has head_nod_trajectory");
     // read joint names
-    head_nod_traj_.joint_names 
+    head_nod_traj_.joint_names
       = readListParameter<std::string>("head_nod_trajectory/joint_names", n, XmlRpc::XmlRpcValue::TypeString);
     head_nod_traj_.points = readJointTrajectoryPointsParameter("head_nod_trajectory/points_list", n);
+  }
+
+  if(n.hasParam("head_shake_trajectory")) {
+    // read joint names
+    head_shake_traj_.joint_names
+      = readListParameter<std::string>("head_shake_trajectory/joint_names", n, XmlRpc::XmlRpcValue::TypeString);
+    head_shake_traj_.points = readJointTrajectoryPointsParameter("head_shake_trajectory/points_list", n);
   }
 
 }

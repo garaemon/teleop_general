@@ -14,6 +14,9 @@ rarm_kinematics_name: "pr2_right_arm_kinematics"
 larm_kinematics_name: "pr2_left_arm_kinematics"
 image_request: "prosilica/request_image"
 
+right_walk_along_pose: [0.049, -0.116, 0.036, -1.272, -0.084, -0.148, -0.027]
+left_walk_along_pose: [0.0, -0.149, 0.085, -1.234, 0.030, -0.141, 3.114]
+
 head_nod_trajectory:
   joint_names:
     - "head_pan_joint"
@@ -35,6 +38,39 @@ head_nod_trajectory:
              velocity: 0.0
           - point:
              position: 0.2
+             velocity: 0.0
+        duration: 1.0
+    - timed_points:
+        points:
+          - point:
+             position: 0.0
+             velocity: 0.0
+          - point:
+             position: 0.0
+             velocity: 0.0
+        duration: 1.5
+
+head_shake_trajectory:
+  joint_names:
+    - "head_pan_joint"
+    - "head_tilt_joint"
+  points_list:
+    - timed_points:
+        points:
+          - point:
+             position: 0.62
+             velocity: 0.0
+          - point:
+             position: 0.2
+             velocity: 0.0
+        duration: 0.5
+    - timed_points:
+        points:
+          - point:
+             position: -0.62
+             velocity: 0.0
+          - point:
+             position: 0.0
              velocity: 0.0
         duration: 1.0
     - timed_points:

@@ -183,6 +183,7 @@ public:
                                 "pr2_controller_manager/switch_controller");
     }
     gc->loadFromParameters(n_local);
+    gc->initROSConnection();
     first_callback_ = true;
     
     head_init_ = false;
