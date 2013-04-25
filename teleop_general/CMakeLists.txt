@@ -21,6 +21,14 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
+rosbuild_add_library(pr2_teleop_general_commander src/pr2_teleop_general_commander.cpp)
+
+rosbuild_add_executable(pr2_teleop_general_joystick src/pr2_teleop_general_joystick.cpp)
+target_link_libraries(pr2_teleop_general_joystick pr2_teleop_general_commander)
+
+rosbuild_add_executable(pr2_teleop_general_keyboard src/pr2_teleop_general_keyboard.cpp)
+target_link_libraries(pr2_teleop_general_keyboard pr2_teleop_general_commander)
+
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
 #target_link_libraries(${PROJECT_NAME} another_library)
