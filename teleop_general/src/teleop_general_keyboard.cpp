@@ -39,7 +39,7 @@
 
 #include <ros/ros.h>
 
-#include "pr2_teleop_general/pr2_teleop_general_commander.h"
+#include "teleop_general/teleop_general_commander.h"
 
 int kfd = 0;
 struct termios cooked, raw;

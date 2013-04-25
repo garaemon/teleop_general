@@ -40,7 +40,7 @@
 #include <ros/ros.h>
 
 #include <sensor_msgs/Joy.h>
-#include "pr2_teleop_general/pr2_teleop_general_commander.h"
+#include "teleop_general/teleop_general_commander.h"
 
 enum JoystickLayoutMode {
   LAYOUT_NONE,

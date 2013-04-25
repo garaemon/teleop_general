@@ -41,7 +41,7 @@
 #include <kinematics_msgs/GetPositionIK.h>
 #include <polled_camera/GetPolledImage.h>
 
-#include "pr2_teleop_general/pr2_teleop_general_commander.h"
+#include "teleop_general/teleop_general_commander.h"
 
 #include "urdf_interface/pose.h"
 
