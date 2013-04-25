@@ -1,0 +1,52 @@
+larm_controller: "l_arm_controller"
+rarm_controller: "r_arm_controller"
+switch_controller: "switch_controller"
+power_board_state: "power_board/state"
+tilt_laser_service: "laser_tilt_controller/set_periodic_cmd"
+head_traj_command: "head_traj_controller/command"
+point_head_action: "/head_traj_controller/point_head_action"
+torso_command: "torso_controller/command"
+base_command: "base_controller/command"
+rgripper_controller_action: "r_gripper_controller/gripper_action"
+lgripper_controller_action: "l_gripper_controller/gripper_action"
+tuck_arm_action: "tuck_arms"
+rarm_kinematics_name: "pr2_right_arm_kinematics"
+larm_kinematics_name: "pr2_left_arm_kinematics"
+image_request: "prosilica/request_image"
+
+head_nod_trajectory:
+  joint_names:
+    - "head_pan_joint"
+    - "head_tilt_joint"
+  points_list:
+    - timed_points:
+        points:
+          - point:
+             position: 0.0
+             velocity: 0.0
+          - point:
+             position: -0.2
+             velocity: 0.0
+        duration: 0.5
+    - timed_points:
+        points:
+          - point:
+             position: 0.0
+             velocity: 0.0
+          - point:
+             position: 0.2
+             velocity: 0.0
+        duration: 1.0
+    - timed_points:
+        points:
+          - point:
+             position: 0.0
+             velocity: 0.0
+          - point:
+             position: 0.0
+             velocity: 0.0
+        duration: 1.5
+
+   
+    
+
