@@ -60,6 +60,10 @@ static const std::string default_torso_command_name="torso_controller/command";
 static const std::string default_base_command_name="base_controller/command";
 static const std::string default_rgripper_controller_action_name="r_gripper_controller/gripper_action";
 static const std::string default_lgripper_controller_action_name="l_gripper_controller/gripper_action";
+static const std::string default_tuck_arm_action_name="tuck_arms";
+static const std::string default_rarm_kinematics_name="pr2_right_arm_kinematics";
+static const std::string default_larm_kinematics_name="pr2_left_arm_kinematics";
+static const std::string default_image_request_name="prosilica/request_image";
 
 class GeneralCommander {
 
@@ -112,7 +116,11 @@ public:
                    std::string torso_command_name=default_torso_command_name,
                    std::string base_command_name=default_base_command_name,
                    std::string r_gripper_controller_action_name=default_rgripper_controller_action_name,
-                   std::string l_gripper_controller_action_name=default_lgripper_controller_action_name); 
+                   std::string l_gripper_controller_action_name=default_lgripper_controller_action_name,
+                   std::string tuck_arm_action_name=default_tuck_arm_action_name,
+                   std::string rarm_kinematics_name=default_rarm_kinematics_name,
+                   std::string larm_kinematics_name=default_larm_kinematics_name,
+                   std::string image_request_name=default_image_request_name); 
 
   ~GeneralCommander();
   

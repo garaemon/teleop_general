@@ -79,7 +79,11 @@ GeneralCommander::GeneralCommander(bool control_body,
                                    std::string torso_command_name,
                                    std::string base_command_name,
                                    std::string r_gripper_controller_action_name,
-                                   std::string l_gripper_controller_action_name)
+                                   std::string l_gripper_controller_action_name,
+                                   std::string tuck_arm_action_name,
+                                   std::string rarm_kinematics_name,
+                                   std::string larm_kinematics_name,
+                                   std::string image_request_name)
   : n_(),
     control_body_(control_body),
     control_head_(control_head),
@@ -156,35 +160,35 @@ GeneralCommander::GeneralCommander(bool control_body,
     left_arm_trajectory_client_ = NULL;
   }
   if(control_larm_ || control_rarm_) {
-    tuck_arms_client_ = new actionlib::SimpleActionClient<pr2_common_action_msgs::TuckArmsAction>("tuck_arms", true);
+    tuck_arms_client_ = new actionlib::SimpleActionClient<pr2_common_action_msgs::TuckArmsAction>(tuck_arm_action_name, true);
   } else {
     tuck_arms_client_ = NULL;
   }
 
   if(control_rarm_) {
     ROS_INFO("Waiting for right arm kinematics servers");
-    ros::service::waitForService("pr2_right_arm_kinematics/get_fk_solver_info");
-    ros::service::waitForService("pr2_right_arm_kinematics/get_fk");
-    ros::service::waitForService("pr2_right_arm_kinematics/get_ik");
-    right_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>("pr2_right_arm_kinematics/get_fk_solver_info", true);
-    right_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>("pr2_right_arm_kinematics/get_fk", true);
-    right_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>("pr2_right_arm_kinematics/get_ik", true);
+    ros::service::waitForService(rarm_kinematics_name + "/get_fk_solver_info");
+    ros::service::waitForService(rarm_kinematics_name + "/get_fk");
+    ros::service::waitForService(rarm_kinematics_name + "/get_ik");
+    right_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>(rarm_kinematics_name + "/get_fk_solver_info", true);
+    right_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>(rarm_kinematics_name + "/get_fk", true);
+    right_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>(rarm_kinematics_name + "/get_ik", true);
   }
 
   if(control_larm_) {
     ROS_INFO("Waiting for left arm kinematics servers");
-    ros::service::waitForService("pr2_left_arm_kinematics/get_fk");
-    ros::service::waitForService("pr2_left_arm_kinematics/get_fk_solver_info");
-    ros::service::waitForService("pr2_left_arm_kinematics/get_ik");
-    left_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>("pr2_left_arm_kinematics/get_fk_solver_info", true);
-    left_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>("pr2_left_arm_kinematics/get_fk", true);
-    left_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>("pr2_left_arm_kinematics/get_ik", true);
+    ros::service::waitForService(larm_kinematics_name + "/get_fk");
+    ros::service::waitForService(larm_kinematics_name + "/get_fk_solver_info");
+    ros::service::waitForService(larm_kinematics_name + "/get_ik");
+    left_arm_kinematics_solver_client_ = n_.serviceClient<kinematics_msgs::GetKinematicSolverInfo>(larm_kinematics_name + "/get_fk_solver_info", true);
+    left_arm_kinematics_forward_client_ = n_.serviceClient<kinematics_msgs::GetPositionFK>(larm_kinematics_name + "/get_fk", true);
+    left_arm_kinematics_inverse_client_ = n_.serviceClient<kinematics_msgs::GetPositionIK>(larm_kinematics_name + "/get_ik", true);
   }
   
 
   if(control_prosilica_) {
-    ros::service::waitForService("prosilica/request_image");
-    prosilica_polling_client_ = n_.serviceClient<polled_camera::GetPolledImage>("prosilica/request_image", true);
+    ros::service::waitForService(image_request_name);
+    prosilica_polling_client_ = n_.serviceClient<polled_camera::GetPolledImage>(image_request_name, true);
   }
 
   right_walk_along_pose_.push_back(.049);
