@@ -1,5 +1,5 @@
 /*
- * pr2_teleop_general_keyboard
+ * teleop_general_keyboard
  * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
  * 
@@ -44,15 +44,15 @@
 int kfd = 0;
 struct termios cooked, raw;
 
-class Pr2TeleopGeneralKeyboard
+class TeleopGeneralKeyboard
 {
 public:
-  Pr2TeleopGeneralKeyboard()
+  TeleopGeneralKeyboard()
   {
     gc = NULL;
   }
 
-  ~Pr2TeleopGeneralKeyboard() {  
+  ~TeleopGeneralKeyboard() {  
     if(gc != NULL) {
       delete gc;
     }
@@ -200,7 +200,7 @@ void spin_function() {
   ros::spin();
 }
 
-Pr2TeleopGeneralKeyboard* generalkey = NULL;
+TeleopGeneralKeyboard* generalkey = NULL;
 
 void quit(int sig)
 {
@@ -228,7 +228,7 @@ int main(int argc, char** argv)
   raw.c_cc[VEOF] = 2;
   tcsetattr(kfd, TCSANOW, &raw);
   
-  generalkey = new Pr2TeleopGeneralKeyboard();
+  generalkey = new TeleopGeneralKeyboard();
   generalkey->init();
   char c;
   

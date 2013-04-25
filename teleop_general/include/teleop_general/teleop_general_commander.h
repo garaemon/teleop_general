@@ -1,5 +1,5 @@
 /*
- * pr2_teleop_general_commander
+ * teleop_general_commander
  * Copyright (c) 2008, Willow Garage, Inc.
  * All rights reserved.
  * 

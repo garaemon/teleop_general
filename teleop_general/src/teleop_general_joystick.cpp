@@ -1,5 +1,5 @@
 /*
- * pr2_teleop_general_joystick
+ * teleop_general_joystick
  * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
  * 
@@ -93,10 +93,10 @@ static const unsigned int SET_WALK_ALONG_BUTTON = 3;
 
 static const ros::Duration DOUBLE_TAP_TIMEOUT(.25);
 
-class Pr2TeleopGeneralJoystick
+class TeleopGeneralJoystick
 {
 public:
-  Pr2TeleopGeneralJoystick(bool deadman_no_publish = false)
+  TeleopGeneralJoystick(bool deadman_no_publish = false)
   { 
     gc = NULL;
   }
@@ -190,11 +190,11 @@ public:
     walk_along_init_waiting_ = false;
     set_walk_along_mode_ = false;
 
-    joy_sub_ = n_.subscribe("joy", 10, &Pr2TeleopGeneralJoystick::joy_cb, this);
+    joy_sub_ = n_.subscribe("joy", 10, &TeleopGeneralJoystick::joy_cb, this);
   }
 
 
-  ~Pr2TeleopGeneralJoystick() {  
+  ~TeleopGeneralJoystick() {  
     if(gc != NULL) {
       delete gc;
     }
@@ -822,7 +822,7 @@ int main(int argc, char **argv)
 
   boost::thread spin_thread(boost::bind(&spin_function));
 
-  Pr2TeleopGeneralJoystick generaljoy;
+  TeleopGeneralJoystick generaljoy;
   generaljoy.init();
   
   ros::Rate pub_rate(FastHz);

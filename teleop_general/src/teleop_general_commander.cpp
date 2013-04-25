@@ -1,5 +1,5 @@
 /*
- * pr2_teleop_booth_commander
+ * teleop_booth_commander
  * Copyright (c) 2008, Willow Garage, Inc.
  * All rights reserved.
  * 
