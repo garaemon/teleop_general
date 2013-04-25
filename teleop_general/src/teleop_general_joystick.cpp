@@ -263,31 +263,31 @@ public:
     bool in_walk_along = false;
     if(gc->isWalkAlongOk()) {
       if(buttonOkAndOn(MOVE_TO_WALK_ALONG_BUTTON, joy_msg) && !sameValueAsLast(MOVE_TO_WALK_ALONG_BUTTON, joy_msg, last_joy_)) {
-	gc->turnOffWalkAlong();
-	ROS_INFO("Turning off walk along");
+        gc->turnOffWalkAlong();
+        ROS_INFO("Turning off walk along");
       } else {
-	vel_val_pan_ = 0.0;
-	vel_val_tilt_ = 0.0;
-	des_torso_vel_ = 0.0;
-	des_vx_ = 0.0;
-	des_vy_ = 0.0;
-	des_vw_ = 0.0;
-	des_right_wrist_vel_ = 0.0;
-	right_arm_vx_ = 0.0;
-	right_arm_vy_ = 0.0;
-	right_arm_vz_ = 0.0;
-	des_left_wrist_vel_ = 0.0;
-	left_arm_vx_ = 0.0;
-	left_arm_vy_ = 0.0;
-	left_arm_vz_ = 0.0;
-	in_walk_along = true;
+        vel_val_pan_ = 0.0;
+        vel_val_tilt_ = 0.0;
+        des_torso_vel_ = 0.0;
+        des_vx_ = 0.0;
+        des_vy_ = 0.0;
+        des_vw_ = 0.0;
+        des_right_wrist_vel_ = 0.0;
+        right_arm_vx_ = 0.0;
+        right_arm_vy_ = 0.0;
+        right_arm_vz_ = 0.0;
+        des_left_wrist_vel_ = 0.0;
+        left_arm_vx_ = 0.0;
+        left_arm_vy_ = 0.0;
+        left_arm_vz_ = 0.0;
+        in_walk_along = true;
       }
     }
 
     //we must be moving the arms into the mode
     if(!in_walk_along && layout == LAYOUT_HEAD && set_walk_along_mode_) {
       if(buttonOkAndOn(SET_WALK_ALONG_BUTTON, joy_msg) 
-	 && !sameValueAsLast(SET_WALK_ALONG_BUTTON, joy_msg, last_joy_)) {
+         && !sameValueAsLast(SET_WALK_ALONG_BUTTON, joy_msg, last_joy_)) {
         gc->sendHeadSequence(GeneralCommander::HEAD_SHAKE);
       }
       if(!setting_walk_along_this_cycle_ && buttonOkAndOn(MOVE_TO_WALK_ALONG_BUTTON, joy_msg) && !sameValueAsLast(MOVE_TO_WALK_ALONG_BUTTON, joy_msg, last_joy_)) {
@@ -315,7 +315,7 @@ public:
     }
     if(layout == LAYOUT_RIGHT_ARM || layout == LAYOUT_LEFT_ARM || layout == LAYOUT_BOTH_ARMS) {
       if(buttonOkAndOn(CLOSE_GRIPPER_BUTTON, joy_msg) 
-	 && !sameValueAsLast(CLOSE_GRIPPER_BUTTON, joy_msg, last_joy_)) {
+         && !sameValueAsLast(CLOSE_GRIPPER_BUTTON, joy_msg, last_joy_)) {
         if(layout == LAYOUT_RIGHT_ARM) {
           gc->sendGripperCommand(GeneralCommander::ARMS_RIGHT, false);
         } else if(layout == LAYOUT_LEFT_ARM) {
@@ -325,7 +325,7 @@ public:
         }
       }
       if(buttonOkAndOn(OPEN_GRIPPER_BUTTON, joy_msg) 
-	 && !sameValueAsLast(OPEN_GRIPPER_BUTTON, joy_msg, last_joy_)) {
+         && !sameValueAsLast(OPEN_GRIPPER_BUTTON, joy_msg, last_joy_)) {
         if(layout == LAYOUT_RIGHT_ARM) {
           gc->sendGripperCommand(GeneralCommander::ARMS_RIGHT, true);
         } else if(layout == LAYOUT_LEFT_ARM) {
@@ -339,18 +339,18 @@ public:
     if(!in_walk_along && layout == LAYOUT_HEAD) {
 
       if(buttonOkAndOn(PROJECTOR_TOGGLE_BUTTON, joy_msg) 
-	 && !sameValueAsLast(PROJECTOR_TOGGLE_BUTTON,joy_msg, last_joy_)) {
+         && !sameValueAsLast(PROJECTOR_TOGGLE_BUTTON,joy_msg, last_joy_)) {
         proj_toggle_com_ = !proj_toggle_com_;
         gc->sendProjectorStartStop(proj_toggle_com_);
       }
       
       if(buttonOkAndOn(PROSILICA_POLL_BUTTON, joy_msg) 
-	 && !sameValueAsLast(PROSILICA_POLL_BUTTON,joy_msg, last_joy_)) {
+         && !sameValueAsLast(PROSILICA_POLL_BUTTON,joy_msg, last_joy_)) {
         gc->requestProsilicaImage(prosilica_namespace_);
       }
 
       if(buttonOkAndOn(HEAD_MODE_TOGGLE_BUTTON, joy_msg) 
-	 && !sameValueAsLast(HEAD_MODE_TOGGLE_BUTTON, joy_msg, last_joy_)) {
+         && !sameValueAsLast(HEAD_MODE_TOGGLE_BUTTON, joy_msg, last_joy_)) {
         
         if(gc->getHeadMode() == GeneralCommander::HEAD_JOYSTICK) {
           ROS_DEBUG("Head mode to left");
@@ -369,7 +369,7 @@ public:
       }
 
       if(buttonOkAndOn(LASER_TOGGLE_BUTTON, joy_msg) 
-	 && !sameValueAsLast(LASER_TOGGLE_BUTTON, joy_msg, last_joy_)) {
+         && !sameValueAsLast(LASER_TOGGLE_BUTTON, joy_msg, last_joy_)) {
         if(gc->getLaserMode() == GeneralCommander::LASER_TILT_OFF) {
           gc->setLaserMode(GeneralCommander::LASER_TILT_SLOW);
         } else if(gc->getLaserMode() == GeneralCommander::LASER_TILT_SLOW) {
@@ -405,7 +405,7 @@ public:
       } else if(!down && up) {
         des_torso_vel_ = torso_step_;
       } else {
-	//ROS_INFO_STREAM("Setting des vel to 0.0");
+        //ROS_INFO_STREAM("Setting des vel to 0.0");
         des_torso_vel_ = 0.0;
       }
       if(axisOk(VX_AXIS, joy_msg)) {
@@ -432,10 +432,10 @@ public:
 
     if(layout == LAYOUT_RIGHT_ARM) {
       if(buttonOkAndOn(ARM_MODE_TOGGLE_BUTTON, joy_msg) && !sameValueAsLast(ARM_MODE_TOGGLE_BUTTON, joy_msg, last_joy_)) {
-	if(in_walk_along) {
-	  gc->turnOffWalkAlong();
+        if(in_walk_along) {
+          gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
-	}
+        }
         if(gc->getArmMode(GeneralCommander::ARMS_RIGHT) == GeneralCommander::ARM_POSITION_CONTROL) {
           gc->setArmMode(GeneralCommander::ARMS_RIGHT,GeneralCommander::ARM_MANNEQUIN_MODE);
         } else if (gc->getArmMode(GeneralCommander::ARMS_RIGHT) == GeneralCommander::ARM_MANNEQUIN_MODE) {
@@ -447,15 +447,15 @@ public:
 
       if(buttonOkAndOn(ARM_TUCK_BUTTON, joy_msg) && !sameValueAsLast(ARM_TUCK_BUTTON, joy_msg, last_joy_)) {
         if(in_walk_along) {
-	  gc->turnOffWalkAlong();
+          gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
-	}
+        }
         gc->tuckArms(GeneralCommander::ARMS_RIGHT);        
       } else if(buttonOkAndOn(ARM_UNTUCK_BUTTON, joy_msg) && !sameValueAsLast(ARM_UNTUCK_BUTTON, joy_msg, last_joy_)) {
         if(in_walk_along) {
-	  gc->turnOffWalkAlong();
+          gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
-	}
+        }
         gc->untuckArms(GeneralCommander::ARMS_RIGHT);
       } 
 
@@ -505,7 +505,7 @@ public:
     }
     if(layout == LAYOUT_LEFT_ARM) {
       if(buttonOkAndOn(ARM_MODE_TOGGLE_BUTTON, joy_msg) && !sameValueAsLast(ARM_MODE_TOGGLE_BUTTON, joy_msg, last_joy_)) {
-	if(in_walk_along) {
+        if(in_walk_along) {
           gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
         }
@@ -520,15 +520,15 @@ public:
 
       if(buttonOkAndOn(ARM_TUCK_BUTTON, joy_msg) && !sameValueAsLast(ARM_TUCK_BUTTON, joy_msg, last_joy_)) {
         if(in_walk_along) {
-	  gc->turnOffWalkAlong();
+          gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
-	}
+        }
         gc->tuckArms(GeneralCommander::ARMS_LEFT);        
       } else if(buttonOkAndOn(ARM_UNTUCK_BUTTON, joy_msg) && !sameValueAsLast(ARM_UNTUCK_BUTTON, joy_msg, last_joy_)) {
         if(in_walk_along) {
-	  gc->turnOffWalkAlong();
+          gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
-	}
+        }
         gc->untuckArms(GeneralCommander::ARMS_LEFT);
       } 
 
@@ -578,7 +578,7 @@ public:
     if(layout == LAYOUT_BOTH_ARMS) {
       if(buttonOkAndOn(ARM_MODE_TOGGLE_BUTTON, joy_msg) && !sameValueAsLast(ARM_MODE_TOGGLE_BUTTON, joy_msg, last_joy_)) {
         GeneralCommander::ArmControlMode toSend;
-	if(in_walk_along) {
+        if(in_walk_along) {
           gc->turnOffWalkAlong();
           ROS_INFO("Turning off walk along");
         }

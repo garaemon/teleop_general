@@ -1164,10 +1164,11 @@ bool GeneralCommander::moveToWalkAlongArmPose() {
     goal.trajectory.points[0].velocities.push_back(0.0);
   }      
   
-  geometry_msgs::Pose right_walk_pose = getPositionFromJointsPose(right_arm_kinematics_forward_client_,  							      
-								  "r_wrist_roll_link", 
-								  joint_names, 
-								  right_walk_along_pose_);
+  geometry_msgs::Pose right_walk_pose = getPositionFromJointsPose(right_arm_kinematics_forward_client_,
+                                                              
+                                                                  "r_wrist_roll_link", 
+                                                                  joint_names, 
+                                                                  right_walk_along_pose_);
   double tot_distance = sqrt(pow(right_walk_pose.position.x-right_wrist_roll_pose_.position.x,2.0)+
                              pow(right_walk_pose.position.y-right_wrist_roll_pose_.position.y,2.0)+
                              pow(right_walk_pose.position.z-right_wrist_roll_pose_.position.z,2.0));
@@ -1192,8 +1193,8 @@ bool GeneralCommander::moveToWalkAlongArmPose() {
       finished_before_timeout = right_arm_trajectory_client_->waitForResult(ros::Duration(5.0));
       state = right_arm_trajectory_client_->getState();
       if(!finished_before_timeout || state != actionlib::SimpleClientGoalState::SUCCEEDED) {
-	ROS_WARN("Not in walk along pose");
-	return false;
+        ROS_WARN("Not in walk along pose");
+        return false;
       }
     } else {
       ROS_DEBUG("Right arm goal successful");
@@ -1221,12 +1222,12 @@ bool GeneralCommander::moveToWalkAlongArmPose() {
   }      
  
   geometry_msgs::Pose left_walk_pose = getPositionFromJointsPose(left_arm_kinematics_forward_client_,
-								 "l_wrist_roll_link",
-								 joint_names,
-								 left_walk_along_pose_);
+                                                                 "l_wrist_roll_link",
+                                                                 joint_names,
+                                                                 left_walk_along_pose_);
   tot_distance = sqrt(pow(left_walk_pose.position.x-left_wrist_roll_pose_.position.x,2.0)+
-		      pow(left_walk_pose.position.y-left_wrist_roll_pose_.position.y,2.0)+
-		      pow(left_walk_pose.position.z-left_wrist_roll_pose_.position.z,2.0));
+                      pow(left_walk_pose.position.y-left_wrist_roll_pose_.position.y,2.0)+
+                      pow(left_walk_pose.position.z-left_wrist_roll_pose_.position.z,2.0));
   ROS_DEBUG_STREAM("Left dist is " << tot_distance);
 
   if(tot_distance > .02) {
@@ -1250,8 +1251,8 @@ bool GeneralCommander::moveToWalkAlongArmPose() {
       finished_before_timeout = left_arm_trajectory_client_->waitForResult(ros::Duration(5.0));
       state = left_arm_trajectory_client_->getState();
       if(!finished_before_timeout || state != actionlib::SimpleClientGoalState::SUCCEEDED) {
-	ROS_WARN("Not in walk along pose");
-	return false;
+        ROS_WARN("Not in walk along pose");
+        return false;
       }
     } else {
       ROS_DEBUG("Left arm goal successful");
@@ -1297,10 +1298,10 @@ bool GeneralCommander::initWalkAlong() {
   joint_names.push_back(pref+"_"+"wrist_flex_joint");
   joint_names.push_back(pref+"_"+"wrist_roll_joint");
 
-  geometry_msgs::Pose right_walk_pose = getPositionFromJointsPose(right_arm_kinematics_forward_client_,  							      
-								  "r_wrist_roll_link", 
-								  joint_names, 
-								  right_walk_along_pose_);
+  geometry_msgs::Pose right_walk_pose = getPositionFromJointsPose(right_arm_kinematics_forward_client_,                                                               
+                                                                  "r_wrist_roll_link", 
+                                                                  joint_names, 
+                                                                  right_walk_along_pose_);
   double tot_distance = sqrt(pow(right_walk_pose.position.x-right_wrist_roll_pose_.position.x,2.0)+
                              pow(right_walk_pose.position.y-right_wrist_roll_pose_.position.y,2.0)+
                              pow(right_walk_pose.position.z-right_wrist_roll_pose_.position.z,2.0));
@@ -1323,12 +1324,12 @@ bool GeneralCommander::initWalkAlong() {
   joint_names.push_back(pref+"_"+"wrist_flex_joint");
   joint_names.push_back(pref+"_"+"wrist_roll_joint");
   geometry_msgs::Pose left_walk_pose = getPositionFromJointsPose(left_arm_kinematics_forward_client_,
-								 "l_wrist_roll_link",
-								 joint_names,
+                                                                 "l_wrist_roll_link",
+                                                                 joint_names,
                                                                  left_walk_along_pose_);
   tot_distance = sqrt(pow(left_walk_pose.position.x-left_wrist_roll_pose_.position.x,2.0)+
-		      pow(left_walk_pose.position.y-left_wrist_roll_pose_.position.y,2.0)+
-		      pow(left_walk_pose.position.z-left_wrist_roll_pose_.position.z,2.0));
+                      pow(left_walk_pose.position.y-left_wrist_roll_pose_.position.y,2.0)+
+                      pow(left_walk_pose.position.z-left_wrist_roll_pose_.position.z,2.0));
   ROS_DEBUG_STREAM("Left dist is " << tot_distance);
   
   if(tot_distance > .02) {
@@ -1454,7 +1455,7 @@ void GeneralCommander::sendWalkAlongCommand(double thresh,
  //  vx = ldx * 7.0 + rdx * 2;
 //   vy = ldy * 7.0 + rdy * 2 - rdx * 3;
 //   vw = rdx * 12.0;
-//   sendBaseCommand(vx, vy, vw);	
+//   sendBaseCommand(vx, vy, vw);       
 }
 
 double GeneralCommander::calcAverage(const std::list<double>& av_list) const {
@@ -1468,9 +1469,9 @@ double GeneralCommander::calcAverage(const std::list<double>& av_list) const {
   return av;
 }
 
-geometry_msgs::Pose GeneralCommander::getPositionFromJointsPose(ros::ServiceClient& service_client,  							   
-							      std::string fk_link,
-							      const std::vector<std::string>& joint_names, const std::vector<double>& joint_pos) {
+geometry_msgs::Pose GeneralCommander::getPositionFromJointsPose(ros::ServiceClient& service_client,                                                        
+                                                              std::string fk_link,
+                                                              const std::vector<std::string>& joint_names, const std::vector<double>& joint_pos) {
   kinematics_msgs::GetPositionFK::Request fk_request;
   kinematics_msgs::GetPositionFK::Response fk_response;
   

@@ -160,9 +160,9 @@ public:
 
 private:
 
-  geometry_msgs::Pose getPositionFromJointsPose(ros::ServiceClient& service_client,  						
-						std::string fk_link,
-						const std::vector<std::string>& joint_names, const std::vector<double>& joint_pos);
+  geometry_msgs::Pose getPositionFromJointsPose(ros::ServiceClient& service_client,                                             
+                                                std::string fk_link,
+                                                const std::vector<std::string>& joint_names, const std::vector<double>& joint_pos);
   
   void updateWalkAlongAverages();
 
