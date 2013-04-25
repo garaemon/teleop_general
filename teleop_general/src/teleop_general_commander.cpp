@@ -91,7 +91,7 @@ GeneralCommander::GeneralCommander(bool control_body,
     control_larm_(control_larm),
     control_prosilica_(control_prosilica)
 {
-
+#if 0
   r_arm_controller_name_ = l_arm_controller_name;
   l_arm_controller_name_ = r_arm_controller_name;
 
@@ -276,6 +276,7 @@ GeneralCommander::GeneralCommander(bool control_body,
 
   last_torso_vel_ = 0.0;
   walk_along_ok_ = false;
+#endif
 }
 
 GeneralCommander::~GeneralCommander() {
@@ -298,6 +299,57 @@ GeneralCommander::~GeneralCommander() {
   if(tuck_arms_client_) {
     delete tuck_arms_client_;
   }
+}
+
+// utitlity functions
+template <class T>
+std::vector<T> readListParameter(std::string parameterName, ros::NodeHandle &n,
+                                 XmlRpc::XmlRpcValue::Type xmlType) {
+  XmlRpc::XmlRpcValue list;
+  std::vector<T> ret;
+  n.getParam(parameterName, list);
+  ROS_ASSERT(list.getType() == XmlRpc::XmlRpcValue::TypeArray);
+  for (int32_t i = 0; i < list.size(); ++i) {
+    ROS_ASSERT(list[i].getType() == xmlType);
+    ret.push_back(static_cast<T>(list[i]));
+  }
+  return ret;
+}
+
+std::vector<trajectory_msgs::JointTrajectoryPoint> readJointTrajectoryPointsParameter(std::string parameterName, ros::NodeHandle &n) {
+  XmlRpc::XmlRpcValue list;
+  std::vector<trajectory_msgs::JointTrajectoryPoint> ret;
+  n.getParam(parameterName, list);
+  ROS_ASSERT(list.getType() == XmlRpc::XmlRpcValue::TypeArray);
+  for (int32_t i = 0; i < list.size(); ++i) {
+    ROS_ASSERT(list[i].getType() == XmlRpc::XmlRpcValue::TypeStruct);
+    XmlRpc::XmlRpcValue timed_points = list[i]["timed_points"];
+    XmlRpc::XmlRpcValue points = timed_points["points"];
+    ROS_ASSERT(points.getType() == XmlRpc::XmlRpcValue::TypeArray);
+    trajectory_msgs::JointTrajectoryPoint trajectory_point;
+    for (int32_t j = 0; j < points.size(); ++j) {
+      XmlRpc::XmlRpcValue point = points[j]["point"];
+      double position = static_cast<double>(point["position"]);
+      double velocity = static_cast<double>(point["double"]);
+      trajectory_point.positions.push_back(position);
+      trajectory_point.velocities.push_back(velocity);
+    }
+    trajectory_point.time_from_start = ros::Duration(static_cast<double>(timed_points["duration"]));
+    ret.push_back(trajectory_point);
+  }
+  return ret;
+}
+
+void GeneralCommander::loadFromParameters(ros::NodeHandle &n) {
+  // head_nod_trajectory
+  if(n.hasParam("head_nod_trajectory")) {
+    ROS_INFO("has head_nod_trajectory");
+    // read joint names
+    head_nod_traj_.joint_names 
+      = readListParameter<std::string>("head_nod_trajectory/joint_names", n, XmlRpc::XmlRpcValue::TypeString);
+    head_nod_traj_.points = readJointTrajectoryPointsParameter("head_nod_trajectory/points_list", n);
+  }
+
 }
 
 void GeneralCommander::jointStateCallback(const sensor_msgs::JointStateConstPtr &jointState)

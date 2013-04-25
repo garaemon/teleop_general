@@ -124,6 +124,8 @@ public:
 
   ~GeneralCommander();
   
+  void loadFromParameters(ros::NodeHandle &n);
+
   void setLaserMode(LaserControlMode mode);
 
   void setHeadMode(HeadControlMode mode);
@@ -168,7 +170,7 @@ public:
                             double x_dist_max, double x_speed_scale,
                             double y_dist_max, double y_speed_scale,
                             double rot_scale);
-
+  
   void sendHeadSequence(HeadSequence seq);
 
   void requestProsilicaImage(std::string ns);

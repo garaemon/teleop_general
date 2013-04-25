@@ -182,6 +182,7 @@ public:
                                 "r_" + arm_controller_name,
                                 "pr2_controller_manager/switch_controller");
     }
+    gc->loadFromParameters(n_local);
     first_callback_ = true;
     
     head_init_ = false;

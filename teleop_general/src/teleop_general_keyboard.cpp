@@ -115,7 +115,7 @@ public:
                                 "r_" + arm_controller_name,
                                 "pr2_controller_manager/switch_controller");
     }
-
+    gc->loadFromParameters(n_local);
     head_init_ = false;
     torso_init_ = false;
   }
